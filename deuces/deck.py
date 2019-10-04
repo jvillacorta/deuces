@@ -1,5 +1,7 @@
+import sys
 from random import shuffle
-from card import Card
+from .card import Card
+
 
 class Deck:
     """
@@ -10,6 +12,7 @@ class Deck:
     _FULL_DECK = []
 
     def __init__(self):
+        self.cards = []
         self.shuffle()
 
     def shuffle(self):
@@ -36,7 +39,11 @@ class Deck:
 
         # create the standard 52 card deck
         for rank in Card.STR_RANKS:
-            for suit,val in Card.CHAR_SUIT_TO_INT_SUIT.iteritems():
-                Deck._FULL_DECK.append(Card.new(rank + suit))
+            if sys.version_info[0] < 3:
+                for suit, val in Card.CHAR_SUIT_TO_INT_SUIT.iteritems():
+                    Deck._FULL_DECK.append(Card.new(rank + suit))
+            else:
+                for suit, val in Card.CHAR_SUIT_TO_INT_SUIT.items():
+                    Deck._FULL_DECK.append(Card.new(rank + suit))
 
         return list(Deck._FULL_DECK)

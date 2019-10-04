@@ -1,7 +1,8 @@
+from __future__ import print_function
 import itertools
-from card import Card
-from deck import Deck
-from lookup import LookupTable
+from .card import Card
+from .lookup import LookupTable
+
 
 class Evaluator(object):
     """
@@ -17,11 +18,11 @@ class Evaluator(object):
     def __init__(self):
 
         self.table = LookupTable()
-        
+
         self.hand_size_map = {
-            5 : self._five,
-            6 : self._six,
-            7 : self._seven
+            5: self._five,
+            6: self._six,
+            7: self._seven
         }
 
     def evaluate(self, cards, board):
@@ -80,7 +81,7 @@ class Evaluator(object):
 
         all5cardcombobs = itertools.combinations(cards, 5)
         for combo in all5cardcombobs:
-            
+
             score = self._five(combo)
             if score < minimum:
                 minimum = score
@@ -141,9 +142,9 @@ class Evaluator(object):
         stages = ["FLOP", "TURN", "RIVER"]
 
         for i in range(len(stages)):
-            line = ("=" * line_length) + " %s " + ("=" * line_length) 
-            print line % stages[i]
-            
+            line = ("=" * line_length) + " %s " + ("=" * line_length)
+            print(line % stages[i])
+
             best_rank = 7463  # rank one worse than worst hand
             winners = []
             for player, hand in enumerate(hands):
@@ -153,8 +154,8 @@ class Evaluator(object):
                 rank_class = self.get_rank_class(rank)
                 class_string = self.class_to_string(rank_class)
                 percentage = 1.0 - self.get_five_card_rank_percentage(rank)  # higher better here
-                print "Player %d hand = %s, percentage rank among all hands = %f" % (
-                    player + 1, class_string, percentage)
+                print("Player %d hand = %s, percentage rank among all hands = %f" % (
+                    player + 1, class_string, percentage))
 
                 # detect winner
                 if rank == best_rank:
@@ -167,20 +168,18 @@ class Evaluator(object):
             # if we're not on the river
             if i != stages.index("RIVER"):
                 if len(winners) == 1:
-                    print "Player %d hand is currently winning.\n" % (winners[0] + 1,)
+                    print("Player %d hand is currently winning.\n" % (winners[0] + 1,))
                 else:
-                    print "Players %s are tied for the lead.\n" % [x + 1 for x in winners]
+                    print("Players %s are tied for the lead.\n" % [x + 1 for x in winners])
 
             # otherwise on all other streets
             else:
-                print
-                print ("=" * line_length) + " HAND OVER " + ("=" * line_length) 
+                print(("=" * line_length) + " HAND OVER " + ("=" * line_length))
                 if len(winners) == 1:
-                    print "Player %d is the winner with a %s\n" % (winners[0] + 1, 
-                        self.class_to_string(self.get_rank_class(self.evaluate(hands[winners[0]], board))))
+                    print("Player %d is the winner with a %s\n" % (winners[0] + 1,
+                                                                   self.class_to_string(self.get_rank_class(
+                                                                       self.evaluate(hands[winners[0]], board)))))
                 else:
-                    print "Players %s tied for the win with a %s\n" % (winners, 
-                        self.class_to_string(self.get_rank_class(self.evaluate(hands[winners[0]], board))))
-
-
-
+                    print("Players %s tied for the win with a %s\n" % (winners,
+                                                                       self.class_to_string(self.get_rank_class(
+                                                                           self.evaluate(hands[winners[0]], board)))))
