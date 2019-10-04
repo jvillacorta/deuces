@@ -1,56 +1,39 @@
+from __future__ import print_function
 import time
-from SevenEval import SevenEval
-from FiveEval import FiveEval
-import random
+from deuces import Deck, Evaluator
+
 
 def setup(n, m):
+    _hands = []
+    _boards = []
 
-    hands = []
-    boards = []
-    
     for i in range(n):
 
-        deck = range(52)
-        random.shuffle(deck)
+        deck = Deck()
         hand = []
         board = []
         for j in range(2):
-            hand.append(deck.pop(0))
+            hand.append(deck.draw())
         for j in range(m):
-            board.append(deck.pop(0))
+            board.append(deck.draw())
 
-        hands.append(hand)
-        boards.append(board)
+        _hands.append(hand)
+        _boards.append(board)
 
-    return boards, hands
+    return _boards, _hands
 
-s = SevenEval()
 
-N = 10000
-cumtime = 0.0
-boards, hands = setup(N, 5)
-for i in range(len(boards)):
-    start = time.time()
-    s.getRankOfSeven(*(boards[i] + hands[i]))
-    cumtime += (time.time() - start)
+for M in (3, 4, 5):
+    N = 10000
+    cumulative_time = 0.0
+    evaluator = Evaluator()
+    boards, hands = setup(N, M)
+    for i in range(len(boards)):
+        start = time.time()
+        evaluator.evaluate(hands[i], boards[i])
+        cumulative_time += (time.time() - start)
 
-avg = float(cumtime / N)
-print "7 card evaluation:"
-print "[*] SpecialK: Average time per evaluation: %f" % avg
-print "[*] SpecialK: Evaluations per second = %f" % (1.0 / avg)
-
-####
-
-f = FiveEval()
-
-cumtime = 0.0
-boards, hands = setup(N, 3)
-for i in range(len(boards)):
-    start = time.time()
-    f.getRankOfFive(*(boards[i] + hands[i]))
-    cumtime += (time.time() - start)
-
-avg = float(cumtime / N)
-print "5 card evaluation:"
-print "[*] SpecialK: Average time per evaluation: %f" % avg
-print "[*] SpecialK: Evaluations per second = %f" % (1.0 / avg)
+    avg = float(cumulative_time / N)
+    print("%i card evaluation:" % M)
+    print("[*] Pokerhand-eval: Average time per evaluation: %f" % avg)
+    print("[*] Pokerhand-eval: Evaluations per second = %f" % (1.0 / avg))

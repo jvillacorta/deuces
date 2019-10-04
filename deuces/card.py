@@ -1,6 +1,7 @@
 from __future__ import print_function
 import sys
 
+
 class Card:
     """
     Static class that handles cards. We represent cards as 32-bit integers, so 
